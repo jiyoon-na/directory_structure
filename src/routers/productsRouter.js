@@ -30,7 +30,7 @@ if(findName.length) {
 //5. 상품(goods)생성
 //생성된 상품 정보를 클라이언트에게 응답반환
 const createdGoods = await Goods.create({
-  // id: "5", 
+  // id: "6", 
   name: name,
   description: description,
   manager: manager,
@@ -59,11 +59,32 @@ routers.get('/productsRouter', async(req, res, next) => {
   // const createdAt = createdGoods.createdAt;
   const findAll = await Goods.find().sort('-createdAt').exec();
   //연습3. 2 클라이언트에게 반환
-  return res.status(200).json(findAll);
+  return res.status(200).json({
+    message : "상품 목록 조회에 성공했습니다.",
+    data: findAll});
 });
 
+//상품상세조회 localhost:3000/api/productsRouter/:id
+routers.get('/productsRouter/:id', async(req, res, next) => {
+//1.상품 아이디 조회
+try {
+  const id = req.params.id;
+  const findId = await Goods.findById(id);
+  //2. 상품 아이디와 일치하는 데이터 찾기
+  if (!findId) {
+  return res.status(404).json({message: '상품을 찾을 수 없습니다.'});
+}
+return res.status(200).json({
+  message: '상품 상세조회에 성공했습니다.',
+  data : findId,
+});
+} catch (err) {
+  next(err);
+}
+});
 
+// await Goods.findById
 
 //routers/products.router.js
 export default routers;
-//////수정시작2////
+//////수정시작4////
