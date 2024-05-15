@@ -25,7 +25,7 @@ if(findName.length) {
 //5. 상품(goods)생성
 //생성된 상품 정보를 클라이언트에게 응답반환
 const createdGoods = await Goods.create({
-  // id: "3", 
+  // id: "5", 
   name: name,
   description: description,
   manager: manager,
