@@ -33,12 +33,13 @@ const goodsSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: new Date,
+    required: true,
     },
     //생성일시 기준으로 내림차순
   updatedAt: {
     type: Date,
-    required: true,
+    default: new Date,
+    
     //미들웨어에서 수정되는 현재시간으로 바꿀 수 있는지
     //예시, schema.pre('save', function(next) {
     //     this.updatedAt = Date.now();

@@ -36,7 +36,7 @@ const createdGoods = await Goods.create({
   manager: manager,
   password: password,
   status: status,
-  updatedAt: new Date,
+  createdAt: new Date,
 });
 
 //연습1저장 맞는지 조회후 확인할 것
@@ -53,7 +53,17 @@ return res.status(201).json({
 });
 });
 
+//연습3. 상품목록조회 api
+routers.get('/productsRouter', async(req, res, next) => {
+  //연습3. 1 목록조회 진행 ; 내림차순으로
+  // const createdAt = createdGoods.createdAt;
+  const findAll = await Goods.find().sort('-createdAt').exec();
+  //연습3. 2 클라이언트에게 반환
+  return res.status(200).json(findAll);
+});
+
+
 
 //routers/products.router.js
 export default routers;
-//////수정시작1////
+//////수정시작2////
