@@ -65,6 +65,8 @@ routers.get('/productsRouter', async(req, res, next) => {
 });
 
 //상품상세조회 localhost:3000/api/productsRouter/:id
+
+// 문제 상황. 잘못된 값이 들어가면 404가 아닌 500으로 찐 오류가 뜸
 routers.get('/productsRouter/:id', async(req, res, next) => {
 //1.상품 아이디 조회
 try {
@@ -80,10 +82,11 @@ return res.status(200).json({
 });
 } catch (err) {
   next(err);
+  //해결할것ㅎ
 }
 });
 
-// await Goods.findById
+// 문제 상황. 잘못된 값이 들어가면 404가 아닌 500으로 찐 오류가 뜸
 
 //routers/products.router.js
 export default routers;
