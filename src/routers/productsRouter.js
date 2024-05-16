@@ -88,30 +88,69 @@ return res.status(200).json({
 
 //해야할일 수정: 일단순서변경강의 내용착안;:id경로매개변수에서 가져오므로 params 사용
 routers.patch('/productsRouter/:id', async(req, res, next) => {
+//path params 에서 아이디 가져오기
   const {id} = req.params;
-  //조회는 id로
-  const { name, description, manager, password } = req.body;
-  const order = [name, description, manager, password];
-  //바꾸고 싶은 항목은 order 
+//바디에서 수정할 정보를 가져옴.
+  const { name, description, manager, password, status } = req.body;
 
-  //현재 나의 order가 무엇인지 알아야함
- const currentId = await Goods.findById(id).exec();
-if(!currentId) {
-  return res.status(404).json ({
-    errorMessage: '상품 id가 존재하지 않습니다.'
-  });
-}
- if(order){
-  const findOrder = await Goods.find({order}).exec();
-  if(findOrder) {
-    findOrder.order = currentId.order;
-    await findOrder.save();
+  //id로 조회한 상품 찾기 (조회시 안나왔을 경우 메세지); 
+  //goods에서 id로 찾은 상품;안에 내용이 있는 ; 위에 import 로 나와있음
+  const good = await Goods.findById(id).exec();
+  //goods에서 id로 상품을 못찾는다면
+  if(!good) {
+    return res.status(404).json ({
+      errorMessage: '상품 id가 존재하지 않습니다.'
+    });
   }
-  currentId.order = order;
- }
- await currentId.save();
+  //상품 항목중 바꾸고 싶은 항목 할당 : 위에 클라이언트가 요청한 const {} =req.body
+  //{}내용 => name 이렇게 간단히 쓸 수 있게 수식이 되어있는 것
+  //즉 여기서의 Name은 고객이 보낸 이름 => 상품의 이름은 고객이 보낸(req)한 이름이다 로 해설하면 될듯
+  //if 문이 없고 good.name=name; 이렇게 식이 다 되어 있다면 5항목 모두 있어야 수정가능. if 문있어서 하나씩 따로 수정 가능
+  if(name) {
+    good.name = name;
+  }
+  if(description) {
+    good.description = description;
+  }
+  if(manager){
+    good.manager = manager;
+  }
+  ///패스워드 동일한지 체크, 동일하면 수정가능 -> 수정 후 저장
+  //
+  if(password){
+    good.password === password;
+  } 
+  if(status){
+    good.status = status;
+  }
+//테스트//
+// if(good.password !== password) {
+//   return res.status(401).json({message: '비밀번호가 일치하지 않습니다.'})
+//   } else {
+//     if(name) {
+//       good.name = name;
+//     }
+//     if(description) {
+//       good.description = description;
+//     }
+//     if(manager){
+//       good.manager = manager;
+//     }
+//     ///패스워드 동일한지 체크, 동일하면 수정가능 -> 수정 후 저장
+//     //
+//     // if(password){
+//     //   good.password === password;
+//     // } 
+//     if(status){
+//       good.status = status;
+//     };
+
+// 수정 후 데이터저장
+  await good.save();
+  //응답
  return res.status(200).json({message: '상품 수정에 성공했습니다.'});
-});
+}
+);
 
 // 삭제//
 routers.delete('/productsRouter/:id', async(req, res, next) => {
