@@ -7,11 +7,10 @@ const connect = () => {
     .connect(
       // TODO: .env 파일에 다음과 같은 정보를 추가해 사용합니다.
       // 빨간색으로 표시된 부분은 대여한 ID, Password, 주소에 맞게끔 수정해주세요!
-    // 'mongodb+srv://sparta-user:@express-mongo.uy7ttg7.mongodb.net/?retryWrites=true&w=majority',
-    'mongodb+srv://sparta-user:aaaa4321@express-mongo.qdakpnu.mongodb.net/?retryWrites=true&w=majority&appName=express-mongo',
-    //   process.env.MONGODB_URL,,
+      // MONGODB_URL='mongodb+srv://sparta-user:aaaa4321@express-mongo.qdakpnu.mongodb.net/?retryWrites=true&w=majority&appName=express-mongo',
+      process.env.MY_MONGODB_URL,
       {
-        dbName: "mongodb_prac2"
+        dbName: process.env.MONGO_NAME
       },
     )
     .then(() => console.log('MongoDB 연결에 성공하였습니다.'))
