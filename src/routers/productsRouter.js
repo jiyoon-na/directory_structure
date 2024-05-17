@@ -116,7 +116,7 @@ routers.patch('/productsRouter/:id', async(req, res, next) => {
     good.manager = manager;
   }
   ///패스워드 동일한지 체크, 동일하면 수정가능 -> 수정 후 저장
-  //
+  //다음에 구현 해볼것..
   if(password){
     good.password === password;
   } 
