@@ -121,7 +121,7 @@ routers.patch('/productsRouter/:id', async(req, res, next) => {
     ...(manager && {manager}),
     ...(status && {status}),
   };
-const data = await Goods.findByIdAndUpdate(id, productInfo);
+const data = await Goods.findByIdAndUpdate(id, productInfo, {new: true});
   //상품 항목중 바꾸고 싶은 항목 할당 : 위에 클라이언트가 요청한 const {} =req.body
   //{}내용 => name 이렇게 간단히 쓸 수 있게 수식이 되어있는 것
   //즉 여기서의 Name은 고객이 보낸 이름 => 상품의 이름은 고객이 보낸(req)한 이름이다 로 해설하면 될듯
