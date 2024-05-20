@@ -4,7 +4,7 @@ import express from "express";
 const routers = express.Router();
 
 //1. 상품생성 api. mongoose, 
-import mongoose from "mongoose";
+// import mongoose from "mongoose"; - 피드백 사용안하는 것
 import Goods from '../schemas/product_Schema.js';
 //스키마에서 지정한 굿즈 (../schemas/product_Schema.js 파일에 있음)
 
@@ -39,9 +39,9 @@ const createdGoods = await Goods.create({
   createdAt: new Date,
 });
 
-//연습1저장 맞는지 조회후 확인할 것
-const allGoods = [];
-allGoods.push(createdGoods); 
+//연습1저장 맞는지 조회후 확인할 것 - 피드백 : 사용안하는것
+// const allGoods = [];
+// allGoods.push(createdGoods); 
 
 // const GoodsSave = new GoodsSave(data);
 // await Goods.save();
@@ -56,8 +56,8 @@ return res.status(201).json({
 //연습3. 상품목록조회 api
 routers.get('/productsRouter', async(req, res, next) => {
   //연습3. 1 목록조회 진행 ; 내림차순으로
-  // const createdAt = createdGoods.createdAt;
-  const findAll = await Goods.find().sort('-createdAt').exec();
+  // 피드백 - select 로 패스워드 숨길 수 있음
+  const findAll = await Goods.find().sort('-createdAt').select("-password").exec();
   //연습3. 2 클라이언트에게 반환
   return res.status(200).json({
     message : "상품 목록 조회에 성공했습니다.",
@@ -95,60 +95,63 @@ routers.patch('/productsRouter/:id', async(req, res, next) => {
 
   //id로 조회한 상품 찾기 (조회시 안나왔을 경우 메세지); 
   //goods에서 id로 찾은 상품;안에 내용이 있는 ; 위에 import 로 나와있음
-  const good = await Goods.findById(id).exec();
+  const good = await Goods.findById(id, { password: true }).exec();
+  //튜터님강의- 비밀번호 확인
+  const passWordMatched = password === good.password;
+  //패스워드 포함하여 조회하기 
   //goods에서 id로 상품을 못찾는다면
   if(!good) {
     return res.status(404).json ({
       errorMessage: '상품 id가 존재하지 않습니다.'
     });
   }
+  //비밀번호가 다르다면
+  if(!passWordMatched) {
+    return res.status(401).json({
+      status: 401,
+      message: '비밀번호가 일치하지 않습니다',
+    });
+  }
+  // 튜터님 강의 스프레드 오퍼레이터 ...(name && {name}) 에서 name 이 있으면 {name} 반환;실행
+  // 실행되면 ...({name})이런 형태로 남음. 무의미한 ()없애주고 {객체}가 ... 스프레더 오퍼레이터 만나면
+  // {중괄호} 풀림
+  const productInfo = {
+    ...(name && {name}),
+    ...(description && {description}), 
+    ...(manager && {manager}),
+    ...(status && {status}),
+  };
+const data = await Goods.findByIdAndUpdate(id, productInfo);
   //상품 항목중 바꾸고 싶은 항목 할당 : 위에 클라이언트가 요청한 const {} =req.body
   //{}내용 => name 이렇게 간단히 쓸 수 있게 수식이 되어있는 것
   //즉 여기서의 Name은 고객이 보낸 이름 => 상품의 이름은 고객이 보낸(req)한 이름이다 로 해설하면 될듯
   //if 문이 없고 good.name=name; 이렇게 식이 다 되어 있다면 5항목 모두 있어야 수정가능. if 문있어서 하나씩 따로 수정 가능
-  if(name) {
-    good.name = name;
-  }
-  if(description) {
-    good.description = description;
-  }
-  if(manager){
-    good.manager = manager;
-  }
-  ///패스워드 동일한지 체크, 동일하면 수정가능 -> 수정 후 저장
-  //다음에 구현 해볼것..
-  if(password){
-    good.password === password;
-  } 
-  if(status){
-    good.status = status;
-  }
-//테스트//
-// if(good.password !== password) {
-//   return res.status(401).json({message: '비밀번호가 일치하지 않습니다.'})
-//   } else {
-//     if(name) {
-//       good.name = name;
-//     }
-//     if(description) {
-//       good.description = description;
-//     }
-//     if(manager){
-//       good.manager = manager;
-//     }
-//     ///패스워드 동일한지 체크, 동일하면 수정가능 -> 수정 후 저장
-//     //
-//     // if(password){
-//     //   good.password === password;
-//     // } 
-//     if(status){
-//       good.status = status;
-//     };
+  // if(name) {
+  //   good.name = name;
+  // }
+  // if(description) {
+  //   good.description = description;
+  // }
+  // if(manager){
+  //   good.manager = manager;
+  // }
+  // ///패스워드 동일한지 체크, 동일하면 수정가능 -> 수정 후 저장
+  // //다음에 구현 해볼것..
+  // if(password){
+  //   good.password === password;
+  // } 
+  // if(status){
+  //   good.status = status;
+  // }
 
-// 수정 후 데이터저장
-  await good.save();
+// 수정 후 데이터저장 얘는 어뜨케 해야하ㅏ지?
+  // await good.save();
   //응답
- return res.status(200).json({message: '상품 수정에 성공했습니다.'});
+ return res.status(200).json({
+  status: 200,
+  message: '상품 수정에 성공했습니다.',
+  data
+});
 }
 );
 
